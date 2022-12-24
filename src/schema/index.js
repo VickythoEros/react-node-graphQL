@@ -1,4 +1,6 @@
 const graphql =  require('graphql')
+const Product = require('../models/products')
+
 const  {
     GraphQLSchema,
     GraphQLObjectType,
@@ -9,7 +11,7 @@ const  {
   
 
 const ProductType = new GraphQLObjectType({
-    name: 'Product',
+    name: 'Products',
     fields: ()=>({
         id: {type: GraphQLString},
         name: {type: GraphQLString},
@@ -31,8 +33,15 @@ const RootQuery = new GraphQLObjectType({
       },
       products:{
         type: new GraphQLList(ProductType),
-        resolve(){
-            return []
+        resolve(parent,args){
+            return Product.find({})
+        } 
+      },
+      productByCategory:{
+        type: new GraphQLList(ProductType),
+        args: {category :{type: GraphQLString}},
+        resolve(parent,args){
+            return Product.find({category:args.category})
         }
       }
     },
